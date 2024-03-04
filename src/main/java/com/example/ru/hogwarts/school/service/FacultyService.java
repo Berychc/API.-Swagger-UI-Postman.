@@ -5,7 +5,10 @@ import com.example.ru.hogwarts.school.model.Faculty;
 import com.example.ru.hogwarts.school.repository.FacultyRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -22,7 +25,7 @@ public class FacultyService {
     }
 
     public Faculty readFaculty(long id) {
-        return repository.findById(id).get();
+        return repository.findById(id).orElseThrow();
     }
 
     public Faculty editFaculty(Faculty faculty) {
@@ -36,6 +39,9 @@ public class FacultyService {
 
     public Collection<Faculty> getFaculties() {
         return repository.findAll();
+    }
 
+    public List<Faculty> getFacultiesByColor(String color) {
+        return repository.findAllByColorIgnoreCase(color);
     }
 }

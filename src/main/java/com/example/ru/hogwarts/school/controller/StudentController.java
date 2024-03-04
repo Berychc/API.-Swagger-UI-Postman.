@@ -2,6 +2,7 @@ package com.example.ru.hogwarts.school.controller;
 
 import com.example.ru.hogwarts.school.model.Student;
 import com.example.ru.hogwarts.school.service.StudentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/student")
 public class StudentController {
 
-    private final List<Student> students = new ArrayList<>();
     private final StudentService service;
 
     public StudentController(StudentService service) {
@@ -39,7 +39,7 @@ public class StudentController {
     public ResponseEntity<Student> editStudent(@RequestBody Student student) {
         Student editStudent = service.editStudent(student);
         if (student == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok(editStudent);
     }
@@ -50,8 +50,8 @@ public class StudentController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/age/{age}")
-    public List<Student> getStudentByAge(@PathVariable Integer age) {
-        return students.stream().filter(student -> student.getAge() == age).collect(Collectors.toList());
+    @GetMapping
+    public List<Student> getStudentByAge(@RequestParam("/age") Integer age) {
+        return getStudentByAge(age);
     }
 }

@@ -5,6 +5,8 @@ import com.example.ru.hogwarts.school.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -21,7 +23,7 @@ public class StudentService {
     }
 
     public Student readStudent(long id) {
-        return repository.findById(id).get();
+        return repository.findById(id).orElseThrow();
     }
 
     public Student editStudent(Student student) {
@@ -34,5 +36,9 @@ public class StudentService {
 
     public Collection<Student> getStudents() {
         return repository.findAll();
+    }
+
+    public List<Student> getStudentByAge(Integer age) {
+        return repository.findAllById(age);
     }
 }
