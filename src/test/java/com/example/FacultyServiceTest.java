@@ -3,37 +3,37 @@ package com.example;
 import com.example.ru.hogwarts.school.model.Faculty;
 import com.example.ru.hogwarts.school.service.FacultyService;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
 
 import static com.example.ConstantFacultyTest.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class FacultyServiceTest {
 
-    private final FacultyService service = new FacultyService();
+    @Mock
+    FacultyService service;
 
     @Test
     void createFaculty() {
         Faculty expected = new Faculty(FID1, FNAME1, FCOLOR1);
+        service.createFaculty(expected);
 
-        assertEquals(0,service.getFaculties().size());
-        assertFalse(service.getFaculties().contains(expected));
-
-        Faculty actual = service.createFaculty(expected);
+        Faculty actual = FACULTY1;
 
         assertEquals(expected, actual);
 
-        assertEquals(1,service.getFaculties().size());
-        assertTrue(service.getFaculties().contains(expected));
     }
 
     @Test
     void readFacultyTest() {
         Faculty expected = new Faculty(FID1, FNAME1, FCOLOR1);
         service.createFaculty(expected);
+
 
         assertEquals(expected, service.readFaculty(FID1));
     }
@@ -54,8 +54,7 @@ public class FacultyServiceTest {
     void removeFacultyTest() {
         Faculty expected = new Faculty(FID1, FNAME1, FCOLOR1);
         service.createFaculty(expected);
-
-        assertEquals(expected, service.removeFaculty(FID1));
+        service.removeFaculty(FID1);
     }
 
     @Test

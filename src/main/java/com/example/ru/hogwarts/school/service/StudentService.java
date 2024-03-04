@@ -1,37 +1,38 @@
 package com.example.ru.hogwarts.school.service;
 
 import com.example.ru.hogwarts.school.model.Student;
+import com.example.ru.hogwarts.school.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
+
 
 @Service
 public class StudentService {
-    private final HashMap<Long, Student> students = new HashMap<>();
-    private long lastId = 0;
+
+    private final StudentRepository repository;
+
+    public StudentService(StudentRepository repository) {
+        this.repository = repository;
+    }
 
     public Student createStudent(Student student) {
-        student.setId(lastId++);
-        students.put(lastId, student);
-        return student;
+        return repository.save(student);
     }
 
     public Student readStudent(long id) {
-        return students.get(id);
+        return repository.findById(id).get();
     }
 
     public Student editStudent(Student student) {
-        students.put(student.getId(), student);
-        return student;
+        return repository.save(student);
     }
 
-    public Student removeStudent(long id) {
-        return students.remove(id);
+    public void removeStudent(long id) {
+        repository.deleteById(id);
     }
 
     public Collection<Student> getStudents() {
-        return Collections.unmodifiableCollection(students.values());
+        return repository.findAll();
     }
 }

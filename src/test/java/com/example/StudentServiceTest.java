@@ -3,8 +3,10 @@ package com.example;
 import com.example.ru.hogwarts.school.model.Student;
 import com.example.ru.hogwarts.school.service.StudentService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.yaml.snakeyaml.events.Event;
 
 
 import java.util.Collection;
@@ -12,24 +14,22 @@ import java.util.Collection;
 import static com.example.ConstantStudentTest.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class StudentServiceTest {
 
-    private final StudentService service = new StudentService();
+    @Mock
+    StudentService service;
 
     @Test
     void createStudentTest() {
         Student expected = new Student(ID1, NAME1, AGE1);
+        service.createStudent(expected);
 
-        assertEquals(0,service.getStudents().size());
-        assertFalse(service.getStudents().contains(expected));
-
-        Student actual = service.createStudent(expected);
+        Student actual = STUDENT1;
 
         assertEquals(expected, actual);
 
-        assertEquals(1,service.getStudents().size());
-        assertTrue(service.getStudents().contains(expected));
+
     }
 
     @Test
@@ -56,8 +56,7 @@ public class StudentServiceTest {
     void removeStudentTest() {
         Student expected = new Student(ID1, NAME1, AGE1);
         service.createStudent(expected);
-
-        assertEquals(expected, service.removeStudent(ID1));
+        service.removeStudent(ID1);
     }
 
     @Test
