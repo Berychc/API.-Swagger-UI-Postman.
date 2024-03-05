@@ -2,12 +2,12 @@ package com.example.ru.hogwarts.school.service;
 
 import com.example.ru.hogwarts.school.model.Student;
 import com.example.ru.hogwarts.school.repository.StudentRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 @Service
 public class StudentService {
@@ -23,11 +23,16 @@ public class StudentService {
     }
 
     public Student readStudent(long id) {
-        return repository.findById(id).orElseThrow();
+        return repository.findById(id).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
     }
 
     public Student editStudent(Student student) {
-        return repository.save(student);
+        if (repository.existsById(student.getId())) {
+            return repository.save(student);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found");
+        }
     }
 
     public void removeStudent(long id) {
@@ -39,6 +44,6 @@ public class StudentService {
     }
 
     public List<Student> getStudentByAge(Integer age) {
-        return repository.findAllById(age);
+        return repository.findAllByAge(age);
     }
 }
