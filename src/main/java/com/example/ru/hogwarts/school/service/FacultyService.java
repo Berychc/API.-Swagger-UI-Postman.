@@ -3,10 +3,12 @@ package com.example.ru.hogwarts.school.service;
 import com.example.ru.hogwarts.school.model.Faculty;
 
 import com.example.ru.hogwarts.school.repository.FacultyRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collection;
-
+import java.util.List;
 
 @Service
 public class FacultyService {
@@ -22,11 +24,16 @@ public class FacultyService {
     }
 
     public Faculty readFaculty(long id) {
-        return repository.findById(id).get();
+        return repository.findById(id).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
     }
 
     public Faculty editFaculty(Faculty faculty) {
-        return repository.save(faculty);
+        if (repository.existsById(faculty.getId())) {
+            return repository.save(faculty);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found");
+        }
     }
 
     public void removeFaculty(long id) {
@@ -36,6 +43,9 @@ public class FacultyService {
 
     public Collection<Faculty> getFaculties() {
         return repository.findAll();
+    }
 
+    public List<Faculty> getFacultiesByColor(String color) {
+        return repository.findAllByColorIgnoreCase(color);
     }
 }
