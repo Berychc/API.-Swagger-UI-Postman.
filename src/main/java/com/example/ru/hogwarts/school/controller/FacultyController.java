@@ -48,12 +48,13 @@ public class FacultyController {
     }
 
     @GetMapping("/search")
-    public List<Faculty> searchFaculties(@RequestParam("querying") String querying) {
-        return service.searchFaculties(querying, querying);
+    public List<Faculty> searchFaculties(@RequestParam("facultyName") String facultyName,
+                                         @RequestParam("color") String color) {
+        return service.searchFaculties(facultyName, color);
     }
 
     @GetMapping("/{facultyId}/students")
-    public ResponseEntity<List<Student>> getFacultyStudents(@PathVariable("facultyId") long facultyId) {
+    public ResponseEntity<List<Student>> getFacultyStudents(@PathVariable("facultyId") Long facultyId) {
         List<Student> students = service.getFacultyStudents(facultyId);
         return ResponseEntity.ok().body(students);
     }

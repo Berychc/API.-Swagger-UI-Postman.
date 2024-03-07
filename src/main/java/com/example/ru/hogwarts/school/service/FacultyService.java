@@ -54,7 +54,7 @@ public class FacultyService {
         return repository.findByFacultyNameIgnoreCaseContainsOrColorIgnoreCase(facultyName, color);
     }
 
-    public List<Student> getFacultyStudents(long facultyId) {
+    public List<Student> getFacultyStudents(Long facultyId) {
         Faculty faculty = repository.findById(facultyId).orElseThrow(()
                 -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                 "Faculty not found with id: " + facultyId));
