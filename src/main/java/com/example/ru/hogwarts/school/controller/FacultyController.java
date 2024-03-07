@@ -1,6 +1,7 @@
 package com.example.ru.hogwarts.school.controller;
 
 import com.example.ru.hogwarts.school.model.Faculty;
+import com.example.ru.hogwarts.school.model.Student;
 import com.example.ru.hogwarts.school.service.FacultyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,8 +42,19 @@ public class FacultyController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping()
+    @GetMapping
     public List<Faculty> getFacultiesByColor(@RequestParam("/color") String color) {
         return getFacultiesByColor(color);
+    }
+
+    @GetMapping("/search")
+    public List<Faculty> searchFaculties(@RequestParam("querying") String querying) {
+        return service.searchFaculties(querying, querying);
+    }
+
+    @GetMapping("/{facultyId}/students")
+    public ResponseEntity<List<Student>> getFacultyStudents(@PathVariable("facultyId") long facultyId) {
+        List<Student> students = service.getFacultyStudents(facultyId);
+        return ResponseEntity.ok().body(students);
     }
 }

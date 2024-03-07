@@ -2,6 +2,7 @@ package com.example.ru.hogwarts.school.service;
 
 import com.example.ru.hogwarts.school.model.Faculty;
 
+import com.example.ru.hogwarts.school.model.Student;
 import com.example.ru.hogwarts.school.repository.FacultyRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -47,5 +48,17 @@ public class FacultyService {
 
     public List<Faculty> getFacultiesByColor(String color) {
         return repository.findAllByColorIgnoreCase(color);
+    }
+
+    public List<Faculty> searchFaculties(String facultyName, String color) {
+        return repository.findByFacultyNameIgnoreCaseContainsOrColorIgnoreCase(facultyName, color);
+    }
+
+    public List<Student> getFacultyStudents(long facultyId) {
+        Faculty faculty = repository.findById(facultyId).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                "Faculty not found with id: " + facultyId));
+
+        return faculty.getStudents();
     }
 }

@@ -1,5 +1,6 @@
 package com.example.ru.hogwarts.school.controller;
 
+import com.example.ru.hogwarts.school.model.Faculty;
 import com.example.ru.hogwarts.school.model.Student;
 import com.example.ru.hogwarts.school.service.StudentService;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,19 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<Student> getStudentByAge(@RequestParam("/age") Integer age) {
+    public List<Student> getStudentByAge(@RequestParam("age") Integer age) {
         return getStudentByAge(age);
+    }
+
+    @GetMapping("/findByAgeBetween")
+    public List<Student> getStudentsByAgeBetween(@RequestParam("min") Integer min,
+                                                 @RequestParam("max") Integer max) {
+        return service.getStudentsByAgeBetween(min, max);
+    }
+
+    @GetMapping("/{studentId}/faculty")
+    public ResponseEntity<Faculty> getStudentFaculty(@PathVariable("studentId") long studentId) {
+        Faculty faculty = service.getStudentFaculty(studentId);
+        return ResponseEntity.ok().body(faculty);
     }
 }
