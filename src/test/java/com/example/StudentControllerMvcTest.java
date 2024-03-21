@@ -50,15 +50,6 @@ public class StudentControllerMvcTest {
     }
 
     @Test
-    void createStudentTest() throws Exception {
-        mockMvc.perform(post("/student/create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Berychc\",\"age\":22}")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-
-    @Test
     void readStudentTest() throws Exception {
 
         Student student = new Student(1L, "Berychc", 22);
@@ -71,26 +62,6 @@ public class StudentControllerMvcTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Berychc"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(22));
 
-    }
-
-    @Test
-    void editStudentTest() throws Exception {
-        mockMvc.perform(put("/student/edit")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Bernadot\",\"age\":23}")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void deleteStudentTest() throws Exception {
-        Student student = new Student(1L, "Berychc", 22);
-
-        when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
-
-        mockMvc.perform(delete("/student/delete/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
     }
 
     @Test

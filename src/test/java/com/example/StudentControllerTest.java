@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -23,22 +25,24 @@ public class StudentControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
+
     @Test
     void contextLoadsTest() throws Exception {
         Assertions.assertThat(studentController).isNotNull();
     }
 
     @Test
+    void testGetStudent() {
+        String response = this.restTemplate.getForObject("/student", String.class);
+        assertNotNull(response);
+        assertTrue(response.contains("Student of this application is Good person!"));
+    }
+    @Test
     void infoStudentTest() throws Exception {
         Assertions.assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/student", String.class))
                 .isEqualTo("Student of this application is Good person!");
     }
 
-    @Test
-    void getStudentTest() throws Exception {
-        Assertions.assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/student", String.class))
-                .isNotNull();
-    }
 
     @Test
     void postStudentTest() throws Exception {
