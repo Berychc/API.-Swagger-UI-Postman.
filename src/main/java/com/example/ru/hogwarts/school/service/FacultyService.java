@@ -38,6 +38,9 @@ public class FacultyService {
     }
 
     public void removeFaculty(long id) {
+        if (!repository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found");
+        }
         repository.deleteById(id);
     }
 
@@ -46,12 +49,9 @@ public class FacultyService {
         return repository.findAll();
     }
 
-    public List<Faculty> getFacultiesByColor(String color) {
-        return repository.findAllByColorIgnoreCase(color);
-    }
 
     public List<Faculty> searchFaculties(String facultyName, String color) {
-        return repository.findByFacultyNameIgnoreCaseContainsOrColorIgnoreCase(facultyName, color);
+        return repository.findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(facultyName, color);
     }
 
     public List<Student> getFacultyStudents(Long facultyId) {
