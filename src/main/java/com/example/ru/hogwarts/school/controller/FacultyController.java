@@ -39,7 +39,7 @@ public class FacultyController {
     @PutMapping("/edit")
     public ResponseEntity<Faculty> editFaculty(@RequestBody Faculty faculty) {
         Faculty editFaculty = service.editFaculty(faculty);
-        return new ResponseEntity<>(editFaculty , HttpStatus.OK);
+        return ResponseEntity.ok().body(editFaculty);
     }
 
     @DeleteMapping("/delete/{id}")

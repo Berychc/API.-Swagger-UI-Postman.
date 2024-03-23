@@ -52,8 +52,8 @@ public class StudentControllerTest {
 
     @BeforeEach
     public void setUp() {
-        Student student1 = new Student(1L, "Berychc", 22);
-        Student student2 = new Student(2L, "Bernadot", 23);
+        Student student1 = new Student(1, "Berychc", 22);
+        Student student2 = new Student(2, "Bernadot", 23);
         List<Student> studentsList = List.of(student1, student2);
 
         savedStudents = studentRepository.saveAll(studentsList);
@@ -80,6 +80,7 @@ public class StudentControllerTest {
     void createStudentTest() throws JsonProcessingException, JSONException {
 
         Student student = new Student(3, "Soup", 26);
+
         String expected = mapper.writeValueAsString(student);
 
         ResponseEntity<String> response = restTemplate.postForEntity("/student/create", student, String.class);

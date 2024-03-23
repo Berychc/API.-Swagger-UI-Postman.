@@ -38,9 +38,6 @@ public class FacultyService {
     }
 
     public void removeFaculty(long id) {
-        if (!repository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found");
-        }
         repository.deleteById(id);
     }
 
@@ -60,5 +57,10 @@ public class FacultyService {
                 "Faculty not found with id: " + facultyId));
 
         return faculty.getStudents();
+    }
+
+    public Faculty getFacultyById(long id) {
+        return repository.findById(id).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
     }
 }
