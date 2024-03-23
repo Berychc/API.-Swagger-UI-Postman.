@@ -3,6 +3,7 @@ package com.example.ru.hogwarts.school.controller;
 import com.example.ru.hogwarts.school.model.Faculty;
 import com.example.ru.hogwarts.school.model.Student;
 import com.example.ru.hogwarts.school.service.FacultyService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +39,7 @@ public class FacultyController {
     @PutMapping("/edit")
     public ResponseEntity<Faculty> editFaculty(@RequestBody Faculty faculty) {
         Faculty editFaculty = service.editFaculty(faculty);
-        return ResponseEntity.ok(editFaculty);
+        return new ResponseEntity<>(editFaculty , HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")

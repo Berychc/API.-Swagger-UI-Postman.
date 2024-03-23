@@ -26,7 +26,7 @@ public class StudentController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity createStudent(@RequestBody(required = false) Student student) {
+    public ResponseEntity<Student> createStudent(@RequestBody(required = false) Student student) {
         Student createdStudent = service.createStudent(student);
         return ResponseEntity.ok(createdStudent);
     }
@@ -38,9 +38,9 @@ public class StudentController {
     }
 
     @PutMapping("/edit")
-    public ResponseEntity<Void> editStudent(@RequestBody Student student) {
-        service.editStudent(student);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Student> editStudent(@RequestBody Student student) {
+        Student studentEdit = service.editStudent(student);
+        return new ResponseEntity<>(studentEdit ,HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")

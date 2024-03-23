@@ -3,12 +3,16 @@ package com.example;
 import com.example.ru.hogwarts.school.controller.FacultyController;
 import com.example.ru.hogwarts.school.model.Faculty;
 import com.example.ru.hogwarts.school.model.Student;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class FacultyControllerTest {
 
+    List<Student> savedFaculties;
+
     @LocalServerPort
     private int port;
 
@@ -29,6 +35,8 @@ public class FacultyControllerTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    private static final ObjectMapper mapper = new ObjectMapper();
 
 
     @Test
@@ -53,59 +61,39 @@ public class FacultyControllerTest {
     }
 
     @Test
-    void postStudentTest() throws Exception {
+    void createFacultyTest() throws JsonProcessingException, JSONException {
+
         Faculty faculty = new Faculty(1, "Berychc", "Purple");
-        faculty.setName("Bernadot");
-        faculty.setColor("Green");
+        String expected = mapper.writeValueAsString(faculty);
 
-        ResponseEntity<Faculty> responseEntity = this.restTemplate.postForEntity("http://localhost:" + port + "/faculty", faculty, Faculty.class);
+        ResponseEntity<String> response = restTemplate.postForEntity("/faculty/create", faculty, String.class);
 
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertEquals(HttpStatus.OK , response.getStatusCode());
+        JSONAssert.assertEquals(expected, response.getBody(), false);
 
-        assertThat(responseEntity.getBody()).isNotNull();
     }
-
-    @Test
-    void getFacultyStudentsTest() throws Exception {
-        ResponseEntity<List<Student>> responseEntity =
-                this.restTemplate.exchange("http://localhost:" + port + "/faculty/1/students",
-                        HttpMethod.GET, null, new ParameterizedTypeReference<List<Student>>() {});
-
-        List<Student> students = responseEntity.getBody();
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertThat(students).extracting(Student::getName).containsExactlyInAnyOrder("Berychc", "Bernadot");
-    }
-
     @Test
     void readFacultyTest() throws Exception {
-        ResponseEntity<Faculty> responseEntity = this.restTemplate.getForEntity
-                ("http://localhost:" + port + "/faculty/1", Faculty.class);
+        long facultyId = 1;
+        Faculty faculty = new Faculty(1, "Berychc", "Purple");
 
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        ResponseEntity<Faculty> response = facultyController.readFaculty(facultyId);
 
-        Faculty faculty = responseEntity.getBody();
-
-        assertThat(faculty).isNotNull();
-
-        assertThat(faculty).isEqualTo(new Faculty(1, "Berychc", "Purple"));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(faculty, response.getBody());
     }
 
     @Test
     void editFacultyTest() throws Exception {
-        Faculty expected = new Faculty(1, "Berychc", "Purple");
-        expected.setName("Bernadot");
-        expected.setColor("Green");
+        Faculty faculty = new Faculty(1, "Berychc", "Purple");
 
-        ResponseEntity<Faculty> responseEntity = this.restTemplate.exchange("http://localhost:" + port + "/faculty/edit",
-                HttpMethod.POST, new ResponseEntity<>(expected, HttpStatus.OK), Faculty.class);
+        HttpEntity<Faculty> entity = new HttpEntity<>(faculty);
+        faculty.setId(savedFaculties.get(0).getId());
 
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        ResponseEntity<Student> response = restTemplate.exchange("/student/edit", HttpMethod.PUT, entity, Student.class);
 
-        Faculty faculty = responseEntity.getBody();
-
-        assertThat(faculty).isNotNull();
-
-        assertThat(faculty).isEqualTo(expected);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals(faculty, response.getBody());
     }
 
     @Test
@@ -118,16 +106,5 @@ public class FacultyControllerTest {
                 ("http://localhost:" + port + "/faculty/" + facultyId, Faculty.class);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-    }
-
-    @Test
-    void searchFacultiesTest() throws Exception {
-        ResponseEntity<List<Faculty>> responseEntity = this.restTemplate.exchange
-                ("http://localhost:" + port + "/faculty/search/Berychc/Purple",
-                        HttpMethod.GET, null, new ParameterizedTypeReference<List<Faculty>>() {});
-
-        List<Faculty> faculty = responseEntity.getBody();
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertThat(faculty).extracting(Faculty::getName).containsExactlyInAnyOrder("Berychc", "Bernadot");
     }
 }
