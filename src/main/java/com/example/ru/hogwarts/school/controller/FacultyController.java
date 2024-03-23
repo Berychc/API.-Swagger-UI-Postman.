@@ -3,6 +3,7 @@ package com.example.ru.hogwarts.school.controller;
 import com.example.ru.hogwarts.school.model.Faculty;
 import com.example.ru.hogwarts.school.model.Student;
 import com.example.ru.hogwarts.school.service.FacultyService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,12 @@ public class FacultyController {
         this.service = service;
     }
 
-    @PostMapping
+    @GetMapping
+    public ResponseEntity getInfoFaculty() {
+        return ResponseEntity.ok("Faculty of this application is Good!");
+    }
+
+    @PostMapping("/create")
     public ResponseEntity<Faculty> createFaculty(@RequestBody Faculty faculty) {
         Faculty createdFaculty = service.createFaculty(faculty);
         return ResponseEntity.ok(createdFaculty);
@@ -30,22 +36,18 @@ public class FacultyController {
         return ResponseEntity.ok(faculty);
     }
 
-    @PutMapping
+    @PutMapping("/edit")
     public ResponseEntity<Faculty> editFaculty(@RequestBody Faculty faculty) {
         Faculty editFaculty = service.editFaculty(faculty);
-        return ResponseEntity.ok(editFaculty);
+        return ResponseEntity.ok().body(editFaculty);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity removeFaculty(@PathVariable Long id) {
         service.removeFaculty(id);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
-    public List<Faculty> getFacultiesByColor(@RequestParam("/color") String color) {
-        return getFacultiesByColor(color);
-    }
 
     @GetMapping("/search")
     public List<Faculty> searchFaculties(@RequestParam("facultyName") String facultyName,

@@ -46,12 +46,9 @@ public class FacultyService {
         return repository.findAll();
     }
 
-    public List<Faculty> getFacultiesByColor(String color) {
-        return repository.findAllByColorIgnoreCase(color);
-    }
 
     public List<Faculty> searchFaculties(String facultyName, String color) {
-        return repository.findByFacultyNameIgnoreCaseContainsOrColorIgnoreCase(facultyName, color);
+        return repository.findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(facultyName, color);
     }
 
     public List<Student> getFacultyStudents(Long facultyId) {
@@ -60,5 +57,10 @@ public class FacultyService {
                 "Faculty not found with id: " + facultyId));
 
         return faculty.getStudents();
+    }
+
+    public Faculty getFacultyById(long id) {
+        return repository.findById(id).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
     }
 }
