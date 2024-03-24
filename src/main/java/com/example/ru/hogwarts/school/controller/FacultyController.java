@@ -30,9 +30,12 @@ public class FacultyController {
         return ResponseEntity.ok(createdFaculty);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Faculty> readFaculty(@PathVariable Long id) {
         Faculty faculty = service.readFaculty(id);
+        if (faculty == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(faculty);
     }
 

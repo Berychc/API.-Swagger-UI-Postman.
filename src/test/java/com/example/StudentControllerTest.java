@@ -16,10 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 
 import java.util.List;
 
@@ -104,15 +101,17 @@ public class StudentControllerTest {
     }
 
     @Test
-    void readStudentTest() throws Exception {
-        long studentId = 1;
-        Student student = new Student(studentId, "Berychc", 22);
+    void readStudentTest() throws JsonProcessingException, JSONException {
 
-        ResponseEntity<Student> response = studentController.readStudent(studentId);
+        String expected = mapper.writeValueAsString(savedStudents.get(0));
+
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("http://localhost:" + port + "/student/" + savedStudents.get(0).getId(),
+                        String.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(student, response.getBody());
-
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        JSONAssert.assertEquals(expected, response.getBody(), false);
     }
 
     @Test

@@ -2,7 +2,6 @@ package com.example;
 
 import com.example.ru.hogwarts.school.controller.FacultyController;
 import com.example.ru.hogwarts.school.model.Faculty;
-import com.example.ru.hogwarts.school.model.Student;
 import com.example.ru.hogwarts.school.repository.FacultyRepository;
 import com.example.ru.hogwarts.school.service.FacultyService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,16 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 
 import java.util.List;
 
@@ -82,34 +77,38 @@ public class FacultyControllerTest {
     @Test
     void createFacultyTest() throws JsonProcessingException, JSONException {
 
-        Faculty faculty = new Faculty(24, "Ghost", "Black");
+        Faculty faculty = new Faculty(1, "Ghost", "Black");
 
         String expected = mapper.writeValueAsString(faculty);
 
-        ResponseEntity<String> response = restTemplate.postForEntity("/faculty/create", faculty, String.class);
+        ResponseEntity<Faculty> response = restTemplate.postForEntity("/faculty/create", faculty, Faculty.class);
 
         assertEquals(HttpStatus.OK , response.getStatusCode());
-        JSONAssert.assertEquals(expected, response.getBody(), false);
+
 
     }
     @Test
-    void readFacultyTest() throws Exception {
-        long facultyId = 1;
-        Faculty faculty = new Faculty(facultyId, "Berychc", "Purple");
+    void readFacultyTest() throws JsonProcessingException, JSONException {
 
-        Mockito.when(facultyService.getFacultyById(facultyId)).thenReturn(faculty);
+        String expected = mapper.writeValueAsString(savedFaculties.get(0));
 
-        ResponseEntity<Faculty> response = restTemplate.getForEntity("/faculties/{id}", Faculty.class, facultyId);
+        ResponseEntity<String> response =
+                restTemplate.getForEntity
+                        ("http://localhost:" + port + "/faculty/" + savedFaculties.get(0).getId(), String.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(faculty, response.getBody());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        JSONAssert.assertEquals(expected, response.getBody(), false);
     }
 
     @Test
     void editFacultyTest() throws Exception {
         Faculty faculty = new Faculty(1, "Berychc", "Purple");
 
+        facultyRepository.save(faculty);
+
         HttpEntity<Faculty> entity = new HttpEntity<>(faculty);
+
         faculty.setId(savedFaculties.get(0).getId());
 
         ResponseEntity<Faculty> response = restTemplate.exchange

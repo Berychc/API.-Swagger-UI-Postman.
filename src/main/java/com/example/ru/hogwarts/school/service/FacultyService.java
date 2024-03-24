@@ -5,6 +5,7 @@ import com.example.ru.hogwarts.school.model.Faculty;
 import com.example.ru.hogwarts.school.model.Student;
 import com.example.ru.hogwarts.school.repository.FacultyRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -57,10 +58,5 @@ public class FacultyService {
                 "Faculty not found with id: " + facultyId));
 
         return faculty.getStudents();
-    }
-
-    public Faculty getFacultyById(long id) {
-        return repository.findById(id).orElseThrow(()
-                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
     }
 }
